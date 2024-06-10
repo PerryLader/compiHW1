@@ -1,0 +1,7 @@
+// Hello world program
+
+int main() {
+	a = 05;
+	print("");
+	return 0;
+}

@@ -1,0 +1,8 @@
+// Hello world program
+
+int main() {
+	print("Hello world!");
+	a < > b;
+	print("");
+	return 0;
+}

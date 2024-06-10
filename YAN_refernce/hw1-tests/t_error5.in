@@ -1,0 +1,6 @@
+// Hello world program
+
+int main() {
+	print("עברית זה רע");
+	return 0;
+}

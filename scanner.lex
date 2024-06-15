@@ -1,19 +1,24 @@
 %{
 /* Declaration Section */
-#include <stdio.h>
 #include "tokens.hpp"
+#include <stdio.h>
 %}
 
 %option yylineno
 %option noyywrap
 %x STR
-digit            ([0-9])
-letter           ([a-zA-Z])
-letterdigit      ([a-zA-Z0-9])
-string           ([ !#-\[\]-~	])
+
+letter           ([A-Za-z])
+
+hex              (x[0-7][0-9a-fA-F])
+digitnozero      ([1-9])
+whitespace       ([\n\t\r ])
 escape           ([\\ntr\"0])
-hex              (x[0-7][0-9A-Fa-f])
-whitespace       ([\t\n\r ])
+string           ([ !\]-~#-\[	])
+digit            ([0-9])
+digithex         ([0-9a-fA-F])
+stringprefix     ({string}|\\{hex}|\\{escape})
+
 
 %%
 int                                                                                 return INT;
@@ -37,15 +42,15 @@ continue                                                                        
 \{                                                                                  return LBRACE;
 \}                                                                                  return RBRACE;
 =                                                                                   return ASSIGN;
-[<>=!]=|>|<                                                                         return RELOP;
-[-+*/]                                                                              return BINOP;
+[<!=>]=|>|<                                                                         return RELOP;
+[*-/+]                                                                              return BINOP;
 \/\/[^\n\r]*                                                                        return COMMENT;
-{letter}{letterdigit}*                                                              return ID;
-([1-9]+{digit}*)|0                                                                  return NUM;
-(0+[1-9]+)											return ERROR;
-\"({string}|\\{escape}|\\{hex})*\"                                                    return STRING;
-\"({string}|\\{escape}|\\{hex})*                                                    return UNCLOSED_STRING;
-\"({string}|\\{escape}|\\{hex})*\\[^\\ntr\"0]                                         return INVALID_ESCAPE_SEQUENCE;
-\"({string}|\\{escape}|\\{hex})*\\x([^0-7][0-9A-Fa-f]|[0-7][^0-9A-Fa-f]|[^0-7][^0-9A-Fa-f]|[^0-9A-Fa-f]) return INVALID_HEX;
+{letter}[a-zA-Z0-9]*                                                                return ID;
+({digitnozero}+{digit}*)|0                                                          return NUM;
+(0+{digitnozero}+)											                        return ERROR;
+\"{stringprefix}*\"                                                                 return STRING;
+\"{stringprefix}*                                                                   return UNCLOSED_STR;
+\"{stringprefix}*\\[^{escape}]                                                      return INV_ESC;
+\"{stringprefix}*\\x([^{digithex}]|[^0-7][^{digithex}]|[0-7][^{digithex}]|[^0-7][{digithex}]) return INV_HEX;
 {whitespace}                                                                        ;
 .                                                                                   return ERROR;

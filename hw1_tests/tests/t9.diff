@@ -1,1 +1,8 @@
-Binary files tests/t9.in.res and tests/t9.in.out differ
+8,11c8,9
+< 4 STRING (
+< 4 ID Hello
+< 5 ID World
+< Error !
+---
+> 4 LPAREN (
+> Error unclosed string

@@ -1,189 +1,181 @@
+#include "tokens.hpp"
 #include <iostream>
 #include <sstream>
-#include "tokens.hpp"
 
-using std::cout;
-using std::endl;
 
-void handleToken(int token);
-void printString();
-void printInvalidEscapeSequence();
-void printInvalidHexSequence();
 
+void printToken(std::string tokenType, std::string tokenText) {
+    std::cout << yylineno << " " << tokenType << " " << tokenText << std::endl;
+}
+
+void bad_HexSeq() {
+    std::string tokenText(yytext);
+    int textSize = tokenText.size();
+    std::cout << "Error undefined escape sequence ";
+    if (tokenText[textSize - 2] == 'x') {
+        std::cout << tokenText[textSize - 2] << std::endl;
+        return;
+    }
+    std::cout << "x" << tokenText[textSize - 2];
+    if (tokenText[textSize - 1] != '"')
+        std::cout << tokenText[textSize - 1];
+    std::cout << std::endl;
+}
+
+void bad_EscapeSeq() {
+    std::string tokenText(yytext);
+    char lastChar = tokenText[tokenText.size() - 1];
+    std::cout << "Error undefined escape sequence " << lastChar << std::endl;
+    exit(0);
+}
+
+void stringToken() {
+    std::string tokenText(yytext);
+    std::stringstream formattedOutput;
+
+    formattedOutput << yylineno << " STRING ";
+
+    for (size_t i = 0; i < tokenText.size(); ++i) {
+        char currentChar = tokenText[i];
+
+        if (currentChar == '"') {
+            continue;
+        }
+
+        if (currentChar == '\\') {
+            char nextChar = tokenText[i + 1];
+
+            if (nextChar == 'x') {
+                int hexValue = std::stoi(tokenText.substr(i + 2, 2), nullptr, 16);
+                formattedOutput << static_cast<char>(hexValue);
+                i += 3;
+            } else if (nextChar == 'n') {
+                formattedOutput << '\n';
+                ++i;
+            } else if (nextChar == 'r') {
+                formattedOutput << '\r';
+                ++i;
+            } else if (nextChar == 't') {
+                formattedOutput << '\t';
+                ++i;
+            } else if (nextChar == '\"') {
+                formattedOutput << '\"';
+                ++i;
+            } else if (nextChar == '\\') {
+                formattedOutput << '\\';
+                ++i;
+            }
+        } else {
+            formattedOutput << currentChar;
+        }
+    }
+
+    std::cout << formattedOutput.str() << std::endl;
+}
 
 int main() {
     int token;
     while ((token = yylex())) {
-        handleToken(token);
-    }
-
-    return 0;
-}
-
-void printToken(std::string name){
-	
-    cout << yylineno << " " << name << " " << yytext << endl;
-}
-
-void handleToken(int token) {
-    switch (token) {
+        switch (token) {
         case INT:
-            printToken("INT");
+            printToken("INT", yytext);
             break;
         case BYTE:
-            printToken("BYTE");
+            printToken("BYTE", yytext);
             break;
         case B:
-            printToken("B");
+            printToken("B", yytext);
             break;
         case BOOL:
-            printToken("BOOL");
-            break;
-        case AUTO:
-            printToken("AUTO");
+            printToken("BOOL", yytext);
             break;
         case AND:
-            printToken("AND");
+            printToken("AND", yytext);
             break;
         case OR:
-            printToken("OR");
+            printToken("OR", yytext);
             break;
         case NOT:
-            printToken("NOT");
+            printToken("NOT", yytext);
             break;
         case TRUE:
-            printToken("TRUE");
+            printToken("TRUE", yytext);
             break;
         case FALSE:
-            printToken("FALSE");
+            printToken("FALSE", yytext);
             break;
         case RETURN:
-            printToken("RETURN");
+            printToken("RETURN", yytext);
             break;
         case IF:
-            printToken("IF");
+            printToken("IF", yytext);
             break;
         case ELSE:
-            printToken("ELSE");
+            printToken("ELSE", yytext);
             break;
         case WHILE:
-            printToken("WHILE");
+            printToken("WHILE", yytext);
             break;
         case BREAK:
-            printToken("BREAK");
+            printToken("BREAK", yytext);
             break;
         case CONTINUE:
-            printToken("CONTINUE");
+            printToken("CONTINUE", yytext);
             break;
         case SC:
-            printToken("SC");
+            printToken("SC", yytext);
             break;
         case LPAREN:
-            printToken("LPAREN");
+            printToken("LPAREN", yytext);
             break;
         case RPAREN:
-            printToken("RPAREN");
+            printToken("RPAREN", yytext);
             break;
         case LBRACE:
-            printToken("LBRACE");
+            printToken("LBRACE", yytext);
             break;
         case RBRACE:
-            printToken("RBRACE");
+            printToken("RBRACE", yytext);
             break;
         case ASSIGN:
-            printToken("ASSIGN");
+            printToken("ASSIGN", yytext);
             break;
         case RELOP:
-            printToken("RELOP");
+            printToken("RELOP", yytext);
             break;
         case COMMENT:
-            cout << yylineno << " COMMENT //" << endl;
+            std::cout << yylineno << " COMMENT //" << std::endl;
             break;
         case BINOP:
-            printToken("BINOP");
+            printToken("BINOP", yytext);
             break;
         case ID:
-            printToken("ID");
+            printToken("ID", yytext);
             break;
         case NUM:
-            printToken("NUM");
+            printToken("NUM", yytext);
             break;
         case STRING:
-            printString();
+            stringToken();
             break;
-        case UNCLOSED_STRING:
-            cout<< "Error unclosed string" << endl;
+        case UNCLOSED_STR:
+            std::cout << "Error unclosed string" << std::endl;
             exit(0);
             break;
-        case INVALID_ESCAPE_SEQUENCE:
-            printInvalidEscapeSequence();
-            break;
-        case INVALID_HEX:
-            printInvalidHexSequence();
+        case INV_HEX:
+            bad_HexSeq();
             exit(0);
+		case INV_ESC:
+            bad_EscapeSeq();
+            exit(0);
+            break;
         case ERROR:
-            cout << "Error " << yytext << endl;
+            std::cout << "Error " << yytext << std::endl;
             exit(0);
         default:
-            cout << "Error " << yytext << endl;
+            std::cout << "Error " << yytext << std::endl;
             exit(0);
     }
-}
-
-void printInvalidHexSequence(){
-    std::string str(yytext);
-    int size = str.size();
-    cout << "Error undefined escape sequence ";
-    if(str[size-2] == 'x'){
-        cout << str[size - 2] << endl;
-        return;
     }
-    cout << "x" << str[size - 2];
-    if(str[size - 1] != '"')
-        cout << str[size-1];
-    cout << endl;
-}
-
-void printInvalidEscapeSequence(){
-    std::string str(yytext);
-    char ch = str[str.size() - 1];
-    cout << "Error undefined escape sequence " << ch << endl;
-    exit(0);
-}
-
-void printString(){
-    std::string str(yytext);
-    cout << yylineno << " STRING " ;
-    for(int i = 0; i < str.size(); i++){
-        char ch = str[i];
-        char next_ch = str[i + 1];
-        if(ch == '"') continue;
-        else if(ch == '\\' && next_ch == 'x'){
-            std::stringstream ss;
-            ss << std::hex << str.substr(i+2, 2);
-            int x;
-            ss >> x;
-            cout << char(x);
-            i += 3;
-        } else if(ch == '\\' && next_ch == 'n'){
-            cout << '\n';
-            i++;
-        } else if(ch == '\\' && next_ch == 'r') {
-            cout << '\r';
-            i++;
-        } else if(ch == '\\' && next_ch == 't'){
-            cout << '\t';
-            i++;
-        }
-        else if(ch == '\\' && next_ch == '\"'){
-            cout << '\"';
-            i++;
-        } else if(ch == '\\'){
-            cout << '\\';
-            i++;
-        } else {
-            cout << ch;
-        }
-    }
-    cout << endl;
+    return 0;
 }

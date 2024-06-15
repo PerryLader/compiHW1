@@ -1,1 +1,11 @@
-Binary files tests/t12.in.res and tests/t12.in.out differ
+151c151,158
+< Error unclosed string
+---
+> 29 STRING This\is"an
+> examplefor	escapellljQQWc
+> 29 RPAREN )
+> 29 SC ;
+> 30 RETURN return
+> 30 NUM 11
+> 30 SC ;
+> 32 RBRACE }

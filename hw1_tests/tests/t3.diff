@@ -1,1 +1,9 @@
-Binary files tests/t3.in.res and tests/t3.in.out differ
+9c9,14
+< Error unclosed string
+---
+> 4 STRING Hello world!
+> 4 RPAREN )
+> 4 SC ;
+> 5 ID print
+> 5 LPAREN (
+> Error undefined escape sequence f

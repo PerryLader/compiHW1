@@ -1,1 +1,6 @@
-Binary files tests/t4.in.res and tests/t4.in.out differ
+7a8,12
+> 3 STRING Hello world!
+> 3 RPAREN )
+> 3 SC ;
+> 4 ID print
+> 4 LPAREN (

@@ -1,7 +1,0 @@
-// Hello world program
-
-int main() {
-	a = 5.1;
-	print("");
-	return 0;
-}

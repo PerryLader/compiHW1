@@ -1,7 +1,0 @@
-// Hello world program
-
-int main() {
-	print("Hello world!");
-	print("\x23\x23\n	Nice,isn't it?\n\x23\x1Gb");
-	return 0;
-}

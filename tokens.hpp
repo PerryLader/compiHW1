@@ -28,7 +28,12 @@
     COMMENT = 25,
     ID = 26,
     NUM = 27,
-    STRING = 28
+    STRING = 28,
+    ERROR=30,
+    UNCLOSED_STRING=31,
+    INVALID_ESCAPE_SEQUENCE=32,
+    INVALID_HEX=33,
+	AUTO=34
   };
   extern int yylineno;
   extern char* yytext;

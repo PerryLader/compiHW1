@@ -10,23 +10,23 @@ void printString();
 void printInvalidEscapeSequence();
 void printInvalidHexSequence();
 
+
 int main() {
     int token;
     while ((token = yylex())) {
         handleToken(token);
     }
+
     return 0;
 }
 
 void printToken(std::string name){
+	
     cout << yylineno << " " << name << " " << yytext << endl;
 }
 
 void handleToken(int token) {
     switch (token) {
-        case VOID:
-            printToken("VOID");
-            break;
         case INT:
             printToken("INT");
             break;
@@ -77,9 +77,6 @@ void handleToken(int token) {
             break;
         case SC:
             printToken("SC");
-            break;
-        case COMMA:
-            printToken("COMMA");
             break;
         case LPAREN:
             printToken("LPAREN");

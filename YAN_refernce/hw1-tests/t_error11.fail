@@ -1,6 +1,0 @@
-1,2c1,2
-< 1 STRING 
-< Error unclosed string
----
-> 1 STRING 
-> Error unclosed string
